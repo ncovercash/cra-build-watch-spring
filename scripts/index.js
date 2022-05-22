@@ -33,11 +33,11 @@ const webpack = importCwd('webpack');
 const config =
   concatenatedVersion >= 212
     ? (isEjected
-        ? importCwd('./config/webpack.config')
-        : importCwd('react-scripts/config/webpack.config'))('development')
+      ? importCwd('./config/webpack.config')
+      : importCwd('react-scripts/config/webpack.config'))('development')
     : isEjected
-    ? importCwd('./config/webpack.config.dev')
-    : importCwd('react-scripts/config/webpack.config.dev');
+      ? importCwd('./config/webpack.config.dev')
+      : importCwd('react-scripts/config/webpack.config.dev');
 
 const HtmlWebpackPlugin = importCwd('html-webpack-plugin');
 const InterpolateHtmlPlugin = importCwd('react-dev-utils/InterpolateHtmlPlugin');
@@ -141,10 +141,13 @@ fs.emptyDir(paths.appBuild)
 
     return new Promise((resolve, reject) => {
       const webpackCompiler = webpack(config);
-      new webpack.ProgressPlugin(() => {
-        if (!inProgress) {
-          spinner.start('Start webpack watch');
-          inProgress = true;
+      new webpack.ProgressPlugin((percentage, message) => {
+        inProgress = percentage !== 1;
+
+        if (inProgress) {
+          spinner.start(`Current build step: "${  message  }" ${Math.round(percentage * 100)}%`);
+        } else {
+          spinner.succeed("Build done");
         }
       }).apply(webpackCompiler);
 
@@ -153,11 +156,7 @@ fs.emptyDir(paths.appBuild)
           return reject(err);
         }
 
-        spinner.succeed();
-
         runHook('after rebuild hook', spinner, afterRebuildHook);
-
-        inProgress = false;
 
         if (verbose) {
           console.log();

@@ -28,6 +28,8 @@ const { getReactScriptsVersion, isEjected } = require('../utils');
 const { major, concatenatedVersion } = getReactScriptsVersion(reactScriptsVersion);
 
 const paths = isEjected ? importCwd('./config/paths') : importCwd('react-scripts/config/paths');
+paths.appIndexJs = path.resolve(__dirname, "src/main/react/index.tsx");
+paths.appSrc = path.resolve(__dirname, "src/main/react");
 const webpack = importCwd('webpack');
 
 const config =
